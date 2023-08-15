@@ -226,7 +226,7 @@ func SendMail(httpResp http.ResponseWriter, httpReq *http.Request) {
 		Subject:       httpReq.FormValue("subject"),
 		Message:       httpReq.FormValue("message"),
 		RequestTarget: httpReq.FormValue("target"),
-		OriginURI:     httpReq.FormValue("requestOrigin"),
+		OriginURI:     httpReq.Header.Get("Referer"),
 	}
 
 	var recipients []string
@@ -304,7 +304,7 @@ func SendMail(httpResp http.ResponseWriter, httpReq *http.Request) {
 	}
 
 	if contactRequest.OriginURI != "" {
-		originURL, err := url.Parse(contactRequest.OriginURI)
+		originURL, err := url.Parse(contactRequest.OriginURI+contactResponse.Status)
 		if err != nil {
 			log.Printf("error parsing the origin URL %s (%s)", originURL, err.Error())
 			originURL = &url.URL{} // continue with default (empty) url
